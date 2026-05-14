@@ -971,7 +971,6 @@ function updateSummary(){
   document.getElementById('b_ALL').textContent=total;
   REGIONS.forEach(r=>document.getElementById('b_'+r).textContent=rc[r]||0);
   updateRiskChart(riskByReg);
-  updatePeriodInfo();
 }
 
 function updateRiskChart(rb){
@@ -1308,12 +1307,11 @@ function updatePeriodInfo(){
     `📁 보유 데이터: SH ${fmtYM(shDR[0])}~${fmtYM(shDR[1])} / B2B ${fmtYM((DR['B2B']||[0,0])[0])}~${fmtYM((DR['B2B']||[0,0])[1])}`;
   document.getElementById('amzDataRange').textContent=
     `📁 보유 데이터: AMZ ${fmtYM(amzDR[0])}~${fmtYM(amzDR[1])}`;
-  applySettings();
 }
 
 function applySettings(){
   fcstData=calcFcst();
-  buildHead(curReg); renderTable(); updateSummary();
+  buildHead(curReg); renderTable(); updateSummary(); updatePeriodInfo();
   if(detSku) renderDetail();
 }
 
@@ -1685,7 +1683,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('updTime').textContent=new Date().toLocaleString('ko-KR');
   document.getElementById('totSku').textContent=SKUS.length;
   ['shSY','shSM','shEY','shEM','amzSY','amzSM','amzEY','amzEM'].forEach(id=>
-    document.getElementById(id).addEventListener('change',updatePeriodInfo));
+    document.getElementById(id).addEventListener('change',applySettings));
   // SKU 드롭다운 초기화
   const dd=document.getElementById('skuDrop');
   dd.innerHTML=SKUS.map(({sku,name})=>
