@@ -1162,8 +1162,8 @@ function renderDetail(){
   histChart=new Chart(document.getElementById('salesHistChart'),{
     type:'bar',
     data:{labels:lbls,datasets:[
-      {label:'SA 직접판매',data:saVals,backgroundColor:'#2E75B6CC',borderColor:'#2E75B6',borderWidth:1,stack:'s'},
-      {label:'Bundle 기여',data:bdVals,backgroundColor:'#e67e22CC',borderColor:'#e67e22',borderWidth:1,stack:'s'},
+      {label:'SA 직접판매',data:saVals,backgroundColor:'#2E75B6CC',borderColor:'#2E75B6',borderWidth:1,stack:'sa'},
+      {label:'Bundle 기여',data:bdVals,backgroundColor:'#e67e22CC',borderColor:'#e67e22',borderWidth:1,stack:'bd'},
     ]},
     options:{responsive:true,maintainAspectRatio:true,
       plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}},
