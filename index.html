@@ -1188,19 +1188,19 @@ function renderDetail(){
   // ── SA/Bundle 분류 테이블 본문 ──
   const tbody2=document.getElementById('breakBody');
   const rows=[];
-  // SA 행
-  const saTotal=Object.values(saReg).reduce((s,v)=>s+v,0);
-  const saAvg=saTotal/Math.max(1,nMonths(startYM,endYM));
+  // SA 행 — colYms(202510~202603) 범위만 합산
+  const saTotal=colYms.reduce((s,ym)=>s+(saReg[ym]||0),0);
+  const saAvg=saTotal/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
   let saRow=`<tr class="sa-row"><td class="left type">SA 직접판매</td><td class="left">${detSku}</td>`;
   colYms.forEach(ym=>saRow+=`<td>${(saReg[ym]||0).toFixed(0)}</td>`);
   for(let i=colYms.length;i<6;i++) saRow+='<td></td>';
   saRow+=`<td>${saTotal.toFixed(0)}</td><td><b>${saAvg.toFixed(1)}</b>/월</td></tr>`;
   rows.push(saRow);
 
-  // Bundle 행들
+  // Bundle 행들 — colYms(202510~202603) 범위만 집계
   const bundleMap2={};
-  Object.entries(bdReg).forEach(([ym,bmap])=>{
-    Object.entries(bmap).forEach(([bsku,qty])=>{
+  colYms.forEach(ym=>{
+    Object.entries(bdReg[ym]||{}).forEach(([bsku,qty])=>{
       if(!bundleMap2[bsku]) bundleMap2[bsku]={};
       bundleMap2[bsku][ym]=(bundleMap2[bsku][ym]||0)+qty;
     });
@@ -1208,8 +1208,8 @@ function renderDetail(){
 
   let bdTotal=0;
   Object.entries(bundleMap2).forEach(([bsku,ymMap])=>{
-    const tot=Object.values(ymMap).reduce((s,v)=>s+v,0);
-    const avg=tot/Math.max(1,nMonths(startYM,endYM));
+    const tot=colYms.reduce((s,ym)=>s+(ymMap[ym]||0),0);
+    const avg=tot/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
     bdTotal+=tot;
     let row=`<tr class="bd-row"><td class="left type">Bundle 기여</td><td class="left">${bsku}</td>`;
     colYms.forEach(ym=>row+=`<td>${(ymMap[ym]||0).toFixed(0)}</td>`);
@@ -1220,7 +1220,7 @@ function renderDetail(){
 
   // 합계 행
   const grandTotal=saTotal+bdTotal;
-  const grandAvg=grandTotal/Math.max(1,nMonths(startYM,endYM));
+  const grandAvg=grandTotal/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
   let totRow=`<tr class="total-row"><td class="left type" colspan="2">📊 합계</td>`;
   colYms.forEach(ym=>{
     const sv=saReg[ym]||0;
