@@ -1583,16 +1583,12 @@ function parseSales(wb){
     }
   }
   SA=newSA;
-  try{localStorage.setItem('pivo_sa',JSON.stringify(SA));}catch(e){}
 }
 
 function loadStoredData(){
   // 재고 데이터 복원
   const inv=localStorage.getItem('pivo_inv');
   if(inv){try{INV=JSON.parse(inv);}catch(e){}}
-  // 판매 데이터 복원
-  const sa=localStorage.getItem('pivo_sa');
-  if(sa){try{SA=JSON.parse(sa);}catch(e){}}
   // GAS 설정 복원 후 자동 동기화
   const gasUrl=localStorage.getItem('pivo_gas_url')||'';
   const autoSync=localStorage.getItem('pivo_auto_sync')==='1';
@@ -1691,6 +1687,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // 관리자 세션 복원 (있으면 헤더에 표시)
   checkAdminSession();
   // 로그인 없이 바로 데이터 로드 + 예측 계산
+  localStorage.removeItem('pivo_sa');  // 구버전 캐시 무효화
   loadStoredData();
   applySettings();
 });
