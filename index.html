@@ -1143,13 +1143,15 @@ function renderDetail(){
   const saData  = SA[detCh]||{};
   const bdData  = BD[detCh]||{};
 
-  // 표시할 YYYYMM 목록 — 차트·테이블 모두 SH 기준기간(202510~202603)으로 고정
-  const ymSet=new Set();
+  // 표시할 YYYYMM 목록 — SH 기준기간 내 모든 월을 고정 생성 (데이터 유무 무관)
   const saReg=(saData[detSku]||{})[detReg]||{};
   const bdReg=((bdData[detSku]||{})[detReg])||{};
-  Object.keys(saReg).forEach(k=>ymSet.add(+k));
-  Object.keys(bdReg).forEach(k=>ymSet.add(+k));
-  const yms=[...ymSet].sort((a,b)=>a-b).filter(ym=>ym>=c.shStartYM&&ym<=c.shEndYM);
+  const yms=[];
+  for(let _y=Math.floor(c.shStartYM/100),_m=c.shStartYM%100;;){
+    const _ym=_y*100+_m; if(_ym>c.shEndYM) break;
+    yms.push(_ym);
+    if(_m===12){_y++;_m=1;}else{_m++;}
+  }
 
   const lbls=yms.map(ym=>{const y=Math.floor(ym/100),m=ym%100;return`${y}.${m}월`;});
   const saVals=yms.map(ym=>saReg[ym]||0);
@@ -1175,9 +1177,8 @@ function renderDetail(){
               y:{stacked:true,beginAtZero:true,title:{display:true,text:'판매 수량',font:{size:10}}}}}
   });
 
-  // ── SA/Bundle 분류 테이블 헤더 (SH 기준기간 = 202510~202603) ──
-  const dispYms=yms.filter(ym=>ym>=c.shStartYM&&ym<=c.shEndYM);
-  const colYms=dispYms.slice(-6);
+  // ── SA/Bundle 분류 테이블 헤더 (yms는 이미 SH 기준기간으로 생성됨) ──
+  const colYms=yms.slice(-6);
   colYms.forEach((ym,i)=>{
     const el=document.getElementById(`bth${i+1}`);
     if(el){const y=Math.floor(ym/100),m=ym%100;el.textContent=`${y}.${m}월`;}
@@ -1188,16 +1189,18 @@ function renderDetail(){
   // ── SA/Bundle 분류 테이블 본문 ──
   const tbody2=document.getElementById('breakBody');
   const rows=[];
-  // SA 행 — colYms(202510~202603) 범위만 합산
+  const nPeriod=Math.max(1,nMonths(startYM,endYM)); // 채널별 분모 (AMZ=2, SH·B2B=선택기간)
+  // SA 행
   const saTotal=colYms.reduce((s,ym)=>s+(saReg[ym]||0),0);
-  const saAvg=saTotal/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
+  const saAvg_n=colYms.filter(ym=>ym>=startYM&&ym<=endYM).reduce((s,ym)=>s+(saReg[ym]||0),0);
+  const saAvg=saAvg_n/nPeriod;
   let saRow=`<tr class="sa-row"><td class="left type">SA 직접판매</td><td class="left">${detSku}</td>`;
   colYms.forEach(ym=>saRow+=`<td>${(saReg[ym]||0).toFixed(0)}</td>`);
   for(let i=colYms.length;i<6;i++) saRow+='<td></td>';
   saRow+=`<td>${saTotal.toFixed(0)}</td><td><b>${saAvg.toFixed(1)}</b>/월</td></tr>`;
   rows.push(saRow);
 
-  // Bundle 행들 — colYms(202510~202603) 범위만 집계
+  // Bundle 행들
   const bundleMap2={};
   colYms.forEach(ym=>{
     Object.entries(bdReg[ym]||{}).forEach(([bsku,qty])=>{
@@ -1209,7 +1212,8 @@ function renderDetail(){
   let bdTotal=0;
   Object.entries(bundleMap2).forEach(([bsku,ymMap])=>{
     const tot=colYms.reduce((s,ym)=>s+(ymMap[ym]||0),0);
-    const avg=tot/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
+    const avg_n=colYms.filter(ym=>ym>=startYM&&ym<=endYM).reduce((s,ym)=>s+(ymMap[ym]||0),0);
+    const avg=avg_n/nPeriod;
     bdTotal+=tot;
     let row=`<tr class="bd-row"><td class="left type">Bundle 기여</td><td class="left">${bsku}</td>`;
     colYms.forEach(ym=>row+=`<td>${(ymMap[ym]||0).toFixed(0)}</td>`);
@@ -1220,7 +1224,10 @@ function renderDetail(){
 
   // 합계 행
   const grandTotal=saTotal+bdTotal;
-  const grandAvg=grandTotal/Math.max(1,nMonths(c.shStartYM,c.shEndYM));
+  const grandAvg_n=colYms.filter(ym=>ym>=startYM&&ym<=endYM).reduce((s,ym)=>{
+    return s+(saReg[ym]||0)+Object.values(bdReg[ym]||{}).reduce((a,v)=>a+v,0);
+  },0);
+  const grandAvg=grandAvg_n/nPeriod;
   let totRow=`<tr class="total-row"><td class="left type" colspan="2">📊 합계</td>`;
   colYms.forEach(ym=>{
     const sv=saReg[ym]||0;
@@ -1301,6 +1308,7 @@ function updatePeriodInfo(){
     `📁 보유 데이터: SH ${fmtYM(shDR[0])}~${fmtYM(shDR[1])} / B2B ${fmtYM((DR['B2B']||[0,0])[0])}~${fmtYM((DR['B2B']||[0,0])[1])}`;
   document.getElementById('amzDataRange').textContent=
     `📁 보유 데이터: AMZ ${fmtYM(amzDR[0])}~${fmtYM(amzDR[1])}`;
+  applySettings();
 }
 
 function applySettings(){
