@@ -1143,13 +1143,13 @@ function renderDetail(){
   const saData  = SA[detCh]||{};
   const bdData  = BD[detCh]||{};
 
-  // 표시할 모든 YYYYMM 목록 (역순 없이 정렬)
+  // 표시할 YYYYMM 목록 — 차트·테이블 모두 SH 기준기간(202510~202603)으로 고정
   const ymSet=new Set();
   const saReg=(saData[detSku]||{})[detReg]||{};
   const bdReg=((bdData[detSku]||{})[detReg])||{};
   Object.keys(saReg).forEach(k=>ymSet.add(+k));
   Object.keys(bdReg).forEach(k=>ymSet.add(+k));
-  const yms=[...ymSet].sort((a,b)=>a-b);
+  const yms=[...ymSet].sort((a,b)=>a-b).filter(ym=>ym>=c.shStartYM&&ym<=c.shEndYM);
 
   const lbls=yms.map(ym=>{const y=Math.floor(ym/100),m=ym%100;return`${y}.${m}월`;});
   const saVals=yms.map(ym=>saReg[ym]||0);
@@ -1175,8 +1175,8 @@ function renderDetail(){
               y:{stacked:true,beginAtZero:true,title:{display:true,text:'판매 수량',font:{size:10}}}}}
   });
 
-  // ── SA/Bundle 분류 테이블 헤더 (최근 6개월) ──
-  const dispYms=yms.filter(ym=>ym>=startYM&&ym<=endYM);
+  // ── SA/Bundle 분류 테이블 헤더 (SH 기준기간 = 202510~202603) ──
+  const dispYms=yms.filter(ym=>ym>=c.shStartYM&&ym<=c.shEndYM);
   const colYms=dispYms.slice(-6);
   colYms.forEach((ym,i)=>{
     const el=document.getElementById(`bth${i+1}`);
