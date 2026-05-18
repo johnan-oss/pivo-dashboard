@@ -561,7 +561,6 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
         <select id="shEM" class="sb-in"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4" selected>4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
       </div>
     </div>
-    <div class="sb-info" id="shInfo"></div>
     <div id="shDataRange" style="color:rgba(255,255,255,.3);font-size:10px;margin-top:3px"></div>
   </div>
   <div class="sb-sec">
@@ -578,7 +577,6 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
         <select id="amzEM" class="sb-in"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4" selected>4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
       </div>
     </div>
-    <div class="sb-info" id="amzInfo"></div>
     <div id="amzDataRange" style="color:rgba(255,255,255,.3);font-size:10px;margin-top:3px"></div>
   </div>
   <div class="sb-sec">
@@ -683,7 +681,6 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
         <select id="det_shEM" class="sb-in"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4" selected>4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
       </div>
     </div>
-    <div class="sb-info" id="detShInfo"></div>
   </div>
   <div class="sb-sec">
     <h4>📅 AMZ 기준 기간</h4>
@@ -699,7 +696,6 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
         <select id="det_amzEM" class="sb-in"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4" selected>4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
       </div>
     </div>
-    <div class="sb-info" id="detAmzInfo"></div>
   </div>
   <div style="padding:10px 14px">
     <button class="apply-btn" onclick="renderDetail()">▶ 상세 분석 갱신</button>
@@ -1411,10 +1407,6 @@ function syncDetailToDash(){
 
 function updatePeriodInfo(){
   const c=getCfg();
-  document.getElementById('shInfo').textContent =`→ ${nMonths(c.shStartYM,c.shEndYM)}개월 기준`;
-  document.getElementById('amzInfo').textContent=`→ ${nMonths(c.amzStartYM,c.amzEndYM)}개월 기준`;
-  document.getElementById('detShInfo').textContent =`→ ${nMonths(c.shStartYM,c.shEndYM)}개월 기준`;
-  document.getElementById('detAmzInfo').textContent=`→ ${nMonths(c.amzStartYM,c.amzEndYM)}개월 기준`;
   syncDashToDetail();
 }
 
