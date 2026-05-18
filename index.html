@@ -54,7 +54,8 @@ input,select,button{font-family:inherit;font-size:13px}
               border-radius:4px;padding:3px 5px;color:#fff;text-align:center;-moz-appearance:textfield}
 .sb-tbl input::-webkit-outer-spin-button,.sb-tbl input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .sb-tbl tr:hover{background:transparent!important}
-#dataRangeSec tr:hover{background:transparent!important}
+#dataRangeSec tr:hover,
+.det-side table tr:hover{background:transparent!important}
 .sb-tbl input:focus{border-color:var(--sky);outline:none}
 .apply-btn{width:100%;background:var(--sky);border:none;border-radius:8px;color:#fff;
            padding:9px;font-weight:700;cursor:pointer;margin-top:4px}
@@ -668,21 +669,35 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
     </div>
   </div>
   <div class="sb-sec">
-    <h4>📦 보유 데이터</h4>
-    <table style="width:100%;border-collapse:collapse;font-size:11px">
-      <tr>
-        <td style="color:rgba(255,255,255,.5);padding:2px 0;width:40px">SH</td>
-        <td id="det_drSH" style="color:#fff;font-weight:600">-</td>
-      </tr>
-      <tr>
-        <td style="color:rgba(255,255,255,.5);padding:2px 0">AMZ</td>
-        <td id="det_drAMZ" style="color:#fff;font-weight:600">-</td>
-      </tr>
-      <tr>
-        <td style="color:rgba(255,255,255,.5);padding:2px 0">B2B</td>
-        <td id="det_drB2B" style="color:#fff;font-weight:600">-</td>
-      </tr>
-    </table>
+    <div style="display:flex;gap:0;align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <h4>📦 보유 데이터</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <tr>
+            <td style="color:rgba(255,255,255,.5);padding:2px 0;width:36px">SH</td>
+            <td id="det_drSH" style="color:#fff;font-weight:600">-</td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,.5);padding:2px 0">AMZ</td>
+            <td id="det_drAMZ" style="color:#fff;font-weight:600">-</td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,.5);padding:2px 0">B2B</td>
+            <td id="det_drB2B" style="color:#fff;font-weight:600">-</td>
+          </tr>
+        </table>
+      </div>
+      <div style="border-left:1px solid rgba(255,255,255,.15);padding-left:10px;margin-left:10px;flex-shrink:0">
+        <div style="color:rgba(255,255,255,.5);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:6px">지역</div>
+        <div style="display:flex;flex-direction:column;gap:3px" id="detRegBtns">
+          <button class="rpill active" data-reg="US" onclick="setDetReg(this)">🇺🇸 US</button>
+          <button class="rpill" data-reg="CA" onclick="setDetReg(this)">🇨🇦 CA</button>
+          <button class="rpill" data-reg="EU" onclick="setDetReg(this)">🇪🇺 EU</button>
+          <button class="rpill" data-reg="UK" onclick="setDetReg(this)">🇬🇧 UK</button>
+          <button class="rpill" data-reg="Other" onclick="setDetReg(this)">🌏 Other</button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="sb-sec">
     <h4>📅 SH / B2B 기준 기간</h4>
@@ -716,17 +731,6 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
   </div>
   <div style="padding:10px 14px">
     <button class="apply-btn" onclick="renderDetail()">▶ 상세 분석 갱신</button>
-  </div>
-  <!-- 지역 선택 -->
-  <div style="padding:0 14px 14px">
-    <div style="color:rgba(255,255,255,.5);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:8px">지역</div>
-    <div style="display:flex;flex-direction:column;gap:4px" id="detRegBtns">
-      <button class="rpill active" data-reg="US" onclick="setDetReg(this)">🇺🇸 US</button>
-      <button class="rpill" data-reg="CA" onclick="setDetReg(this)">🇨🇦 CA</button>
-      <button class="rpill" data-reg="EU" onclick="setDetReg(this)">🇪🇺 EU</button>
-      <button class="rpill" data-reg="UK" onclick="setDetReg(this)">🇬🇧 UK</button>
-      <button class="rpill" data-reg="Other" onclick="setDetReg(this)">🌏 Other</button>
-    </div>
   </div>
 </div><!-- /det-side -->
 
