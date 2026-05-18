@@ -1339,9 +1339,6 @@ function renderDetail(){
     tbodyA.innerHTML+=`<tr><td class="left">${yr}년 ${mo}월</td><td>${amzD}</td><td ${clsA}>${balA}</td></tr>`;
   }
 
-  // 기간 요약
-  document.getElementById('detPeriodSummary').innerHTML=
-    `SH/B2B: ${Math.floor(c.shStartYM/100)}.${c.shStartYM%100}~${Math.floor(c.shEndYM/100)}.${c.shEndYM%100} (${nSH}개월)<br>AMZ: ${Math.floor(c.amzStartYM/100)}.${c.amzStartYM%100}~${Math.floor(c.amzEndYM/100)}.${c.amzEndYM%100} (${nAMZ}개월)`;
 }
 
 // ════════════════════════════════════════════════════════
@@ -1373,6 +1370,9 @@ function updatePeriodInfo(){
   const c=getCfg();
   document.getElementById('shInfo').textContent =`→ ${nMonths(c.shStartYM,c.shEndYM)}개월 기준`;
   document.getElementById('amzInfo').textContent=`→ ${nMonths(c.amzStartYM,c.amzEndYM)}개월 기준`;
+  document.getElementById('detPeriodSummary').innerHTML=
+    `SH/B2B: ${fmtYM(c.shStartYM)}~${fmtYM(c.shEndYM)} (${nMonths(c.shStartYM,c.shEndYM)}개월)<br>`+
+    `AMZ: ${fmtYM(c.amzStartYM)}~${fmtYM(c.amzEndYM)} (${nMonths(c.amzStartYM,c.amzEndYM)}개월)`;
 }
 
 function applySettings(){
