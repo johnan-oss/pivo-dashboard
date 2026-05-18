@@ -510,6 +510,23 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
 ═══════════════════════════════ -->
 <div class="page active" id="page-dash" style="min-height:calc(100vh - 88px)">
 <div class="sidebar">
+  <div class="sb-sec" id="dataRangeSec">
+    <h4>📦 보유 데이터</h4>
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0;width:40px">SH</td>
+        <td id="drSH" style="color:#fff;font-weight:600">로딩 중...</td>
+      </tr>
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0">AMZ</td>
+        <td id="drAMZ" style="color:#fff;font-weight:600">로딩 중...</td>
+      </tr>
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0">B2B</td>
+        <td id="drB2B" style="color:#fff;font-weight:600">로딩 중...</td>
+      </tr>
+    </table>
+  </div>
   <div class="sb-sec">
     <h4>⚙️ 기준 설정</h4>
     <div class="sb-row">
@@ -1355,12 +1372,6 @@ function updatePeriodInfo(){
   const c=getCfg();
   document.getElementById('shInfo').textContent =`→ ${nMonths(c.shStartYM,c.shEndYM)}개월 기준`;
   document.getElementById('amzInfo').textContent=`→ ${nMonths(c.amzStartYM,c.amzEndYM)}개월 기준`;
-  // 실제 데이터 보유 범위 표시
-  const shDR=DR['SH']||[0,0], amzDR=DR['AMZ']||[0,0];
-  document.getElementById('shDataRange').textContent =
-    `📁 보유 데이터: SH ${fmtYM(shDR[0])}~${fmtYM(shDR[1])} / B2B ${fmtYM((DR['B2B']||[0,0])[0])}~${fmtYM((DR['B2B']||[0,0])[1])}`;
-  document.getElementById('amzDataRange').textContent=
-    `📁 보유 데이터: AMZ ${fmtYM(amzDR[0])}~${fmtYM(amzDR[1])}`;
 }
 
 function applySettings(){
@@ -1644,6 +1655,7 @@ function parseSales(wb){
   }
   SA=newSA;
   computeDR();
+  updateDataRangeDisplay();
 }
 
 function computeDR(){
@@ -1746,6 +1758,38 @@ function parseGSheetRows(rows){
 // ════════════════════════════════════════════════════════
 // 초기화
 // ════════════════════════════════════════════════════════
+function computeDataRange(){
+  var result={};
+  ['SH','AMZ','B2B'].forEach(function(ch){
+    var ym=[];
+    Object.values(SA[ch]||{}).forEach(function(skuObj){
+      Object.values(skuObj).forEach(function(regObj){
+        Object.keys(regObj).forEach(function(k){ym.push(+k);});
+      });
+    });
+    result[ch]=ym.length?{min:Math.min.apply(null,ym),max:Math.max.apply(null,ym)}:null;
+  });
+  return result;
+}
+
+function ymToLabel(ym){
+  if(!ym) return '-';
+  return Math.floor(ym/100)+'.'+String(ym%100).padStart(2,'0');
+}
+
+function updateDataRangeDisplay(){
+  var dr=computeDataRange();
+  ['SH','AMZ','B2B'].forEach(function(ch){
+    var el=document.getElementById('dr'+ch);
+    if(!el) return;
+    if(dr[ch]){
+      el.textContent=ymToLabel(dr[ch].min)+' ~ '+ymToLabel(dr[ch].max);
+    } else {
+      el.textContent='데이터 없음';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('updTime').textContent=new Date().toLocaleString('ko-KR');
   document.getElementById('totSku').textContent=SKUS.length;
@@ -1762,6 +1806,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // 로그인 없이 바로 데이터 로드 + 예측 계산
   localStorage.removeItem('pivo_sa');  // 구버전 캐시 무효화
   computeDR();
+  updateDataRangeDisplay();
   loadStoredData();
   applySettings();
 });
