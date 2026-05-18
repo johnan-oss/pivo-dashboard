@@ -668,6 +668,23 @@ td.nm{text-align:left;color:#666;max-width:170px;overflow:hidden;text-overflow:e
     </div>
   </div>
   <div class="sb-sec">
+    <h4>📦 보유 데이터</h4>
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0;width:40px">SH</td>
+        <td id="det_drSH" style="color:#fff;font-weight:600">-</td>
+      </tr>
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0">AMZ</td>
+        <td id="det_drAMZ" style="color:#fff;font-weight:600">-</td>
+      </tr>
+      <tr>
+        <td style="color:rgba(255,255,255,.5);padding:2px 0">B2B</td>
+        <td id="det_drB2B" style="color:#fff;font-weight:600">-</td>
+      </tr>
+    </table>
+  </div>
+  <div class="sb-sec">
     <h4>📅 SH / B2B 기준 기간</h4>
     <div class="sb-row"><label class="sb-lbl">시작</label>
       <div class="g2">
@@ -1816,13 +1833,11 @@ function ymToLabel(ym){
 function updateDataRangeDisplay(){
   var dr=computeDataRange();
   ['SH','AMZ','B2B'].forEach(function(ch){
-    var el=document.getElementById('dr'+ch);
-    if(!el) return;
-    if(dr[ch]){
-      el.textContent=ymToLabel(dr[ch].min)+' ~ '+ymToLabel(dr[ch].max);
-    } else {
-      el.textContent='데이터 없음';
-    }
+    var text=dr[ch]?ymToLabel(dr[ch].min)+' ~ '+ymToLabel(dr[ch].max):'데이터 없음';
+    ['dr'+ch,'det_dr'+ch].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.textContent=text;
+    });
   });
 }
 
